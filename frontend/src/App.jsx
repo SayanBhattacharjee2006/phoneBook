@@ -17,24 +17,33 @@ import EditContact from "./pages/contacts/EditContact";
 // Profile
 import Profile from "./pages/profile/Profile";
 
+// layouts
+import AuthLayout from "./layouts/AuthLayout";
+import AppLayout from "./layouts/AppLayout";
+
 function App() {
     return (
         <BrowserRouter>
             <Routes>
                 {/* Auth Routes */}
-
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/welcome" element={<Welcome />} />
+                <Route element={<AuthLayout/>}>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/welcome" element={<Welcome />} />
+                </Route>
 
                 {/* App Routes */}
-
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/contacts" element={<ContactList />} />
-                <Route path="/contacts/new" element={<AddContact />} />
-                <Route path="/contacts/:id" element={<ContactDetails />} />
-                <Route path="/contacts/:id/edit" element={<EditContact />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route element={<AppLayout/>}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/contacts" element={<ContactList />} />
+                    <Route path="/contacts/new" element={<AddContact />} />
+                    <Route path="/contacts/:id" element={<ContactDetails />} />
+                    <Route
+                        path="/contacts/:id/edit"
+                        element={<EditContact />}
+                    />
+                    <Route path="/profile" element={<Profile />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     );
