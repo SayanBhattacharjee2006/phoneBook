@@ -1,0 +1,49 @@
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Root Design Tokens */
+:root {
+    --color-primary: #0f766e; /* teal */
+    --color-background: #ffffff;
+    --color-text-primary: #111827; /* dark gray */
+    --color-text-secondary: #6b7280; /* muted gray */
+    --color-border: #e5e7eb;
+    --color-danger: #dc2626;
+
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+        sans-serif;
+}
+
+/* Base body styles */
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+/* Buttons reset */
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* Inputs reset */
+input,
+textarea {
+    font-family: inherit;
+    outline: none;
+}
