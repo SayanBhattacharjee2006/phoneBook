@@ -5,6 +5,7 @@ const useAuthStore = create((set) => ({
     user: null,
     isAuthenticated: false,
     loading: false,
+    authChecked: false,
 
     //login
     login: async (data) => {
@@ -12,10 +13,12 @@ const useAuthStore = create((set) => ({
             set({ loading: true });
             await loginUser(data);
             const res = await getMe();
+            const userData = res?.data?.user ?? res?.data?.data?.user;
             set({
-                user: res.data.user,
+                user: userData,
                 isAuthenticated: true,
                 loading: false,
+                authChecked: true,
             });
         } catch (error) {
             set({ loading: false });
@@ -29,10 +32,12 @@ const useAuthStore = create((set) => ({
             set({ loading: true });
             await registerUser(data);
             const res = await getMe();
+            const userData = res?.data?.user ?? res?.data?.data?.user;
             set({
-                user: res.data.user,
+                user: userData,
                 isAuthenticated: true,
                 loading: false,
+                authChecked: true,
             });
         } catch (error) {
             set({ loading: false });
@@ -45,16 +50,19 @@ const useAuthStore = create((set) => ({
         try {
             set({ loading: true });
             const res = await getMe();
+            const userData = res?.data?.user ?? res?.data?.data?.user;
             set({
-                user: res.data.user,
+                user: userData,
                 isAuthenticated: true,
                 loading: false,
+                authChecked: true,
             });
         } catch (error) {
             set({
                 user: null,
                 isAuthenticated: false,
                 loading: false,
+                authChecked:true
             });
         }
     },
