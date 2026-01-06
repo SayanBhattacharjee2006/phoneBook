@@ -32,7 +32,6 @@ const contactSchema = new mongoose.Schema(
         company: {
             type: String,
             trim:true,
-            minLength:2,
             maxLength:50,
             index:true,
         },
