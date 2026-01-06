@@ -1,14 +1,42 @@
 import Card from "../../components/Card";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/auth.store";
+import { useState } from "react";
+
 function Login() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const { login, loading } = useAuthStore();
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(formData);
+            navigate("/welcome");
+        } catch (error) {
+            console.log("Login Failed", error);
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card>
-                <div className="w-full max-w-md space-y-6 bg-white p-6 rounded-lg shadow-sm">
+                <form
+                    onSubmit={handleSubmit}
+                    className="w-full max-w-md space-y-6 bg-white p-6 rounded-lg shadow-sm"
+                >
                     {/* Header */}
                     <div className="space-y-1">
                         <h1 className="text-2xl font-semibold">Welcome Back</h1>
@@ -22,20 +50,29 @@ function Login() {
                         <Input
                             label="Email"
                             type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="you@example.com"
                         />
 
                         <Input
                             label="Password"
                             type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
                             placeholder="••••••••"
                         />
                     </div>
 
                     {/* Action */}
-                    <Button onClick={()=>navigate("/welcome")}>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                    >
                         <span className="w-full inline-block text-center py-2">
-                            Login
+                            {loading ? "Logging in ..." : "Login"}
                         </span>
                     </Button>
 
@@ -49,7 +86,7 @@ function Login() {
                             Register
                         </Link>
                     </p>
-                </div>
+                </form>
             </Card>
         </div>
     );
