@@ -14,6 +14,7 @@ function AddContact() {
         lastName: "",
         company: "",
         notes: "",
+        birthday: "",
     });
 
     const handleChange = (e) => {
@@ -28,14 +29,18 @@ function AddContact() {
         e.preventDefault();
         if (!formData.firstName.trim()) return;
         try {
-            await createContact({
-                contact: {
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    company: formData.company,
-                    notes: formData.notes,
-                },
-            });
+            const contactPayload = {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                company: formData.company,
+                notes: formData.notes,
+            };
+
+            if(formData.birthday){
+              contactPayload.birthday = formData.birthday;
+            }
+
+            await createContact({ contact: contactPayload});
 
             navigate("/contacts");
         } catch (error) {
@@ -93,6 +98,19 @@ function AddContact() {
                                 rows={4}
                                 className="w-full border rounded-md px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-primary"
                                 placeholder="Additional notes about this contact"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-sm text-gray-600">
+                                Birthday
+                            </label>
+                            <input
+                                type="date"
+                                name="birthday"
+                                value={formData.birthday}
+                                onChange={handleChange}
+                                max={new Date().toISOString().split("T")[0]}
+                                className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                             />
                         </div>
                     </div>

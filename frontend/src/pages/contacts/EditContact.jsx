@@ -22,6 +22,7 @@ function EditContact() {
         lastName: "",
         company: "",
         notes: "",
+        birthday: "",
     });
 
     useEffect(() => {
@@ -37,6 +38,9 @@ function EditContact() {
                 lastName: selectedContact.lastName || "",
                 company: selectedContact.company || "",
                 notes: selectedContact.notes || "",
+                birthday: selectedContact.birthday
+                    ? selectedContact.birthday.split("T")[0]
+                    : "",
             });
         }
     }, [selectedContact]);
@@ -57,14 +61,19 @@ function EditContact() {
         }
 
         try {
+            const contactPayload = {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                company: formData.company,
+                notes: formData.notes,
+            };
+
+            if (formData.birthday) {
+                contactPayload.birthday = formData.birthday;
+            }
+
             await updateContact(id, {
-                contact: {
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    company: formData.company,
-                    notes : formData.notes,
-                    
-                },
+                contact: contactPayload,
             });
 
             navigate(`/contacts/${id}`);
@@ -73,7 +82,7 @@ function EditContact() {
         }
     };
 
-    if (loading && !selectedContact) {
+    if (!selectedContact) {
         return <div className="p-6">Loading contact...</div>;
     }
 
@@ -115,7 +124,20 @@ function EditContact() {
                             value={formData.company}
                             onChange={handleChange}
                         />
-
+                        <div className="space-y-1">
+                            <label className="text-sm text-gray-600">
+                                Birthday
+                            </label>
+                            <input
+                                type="date"
+                                name="birthday"
+                                value={formData.birthday}
+                                onChange={handleChange}
+                                max={new Date().toISOString().split("T")[0]}
+                                className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                            />
+                        </div>
+                        
                         <div className="space-y-1">
                             <label className="text-sm text-gray-600">
                                 Notes
@@ -129,6 +151,7 @@ function EditContact() {
                                 placeholder="Additional notes about this contact"
                             />
                         </div>
+                        
                     </div>
 
                     {/* Actions */}
