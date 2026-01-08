@@ -75,6 +75,16 @@ function ContactDetails() {
                     </span>
                 </div>
             </div>
+
+            {selectedContact.notes && (
+                <div className="border rounded-lg p-4 space-y-1">
+                    <h3 className="text-sm font-medium">Notes</h3>
+                    <p className="text-sm text-gray-600 whitespace-pre-line">
+                        {selectedContact.notes}
+                    </p>
+                </div>
+            )}
+
             {/* Placeholders for future phases */}
             <div className="space-y-2">
                 <p className="text-sm text-gray-500">

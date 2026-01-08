@@ -1,20 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useContactStore from "../../store/contact.store";
 import { Link } from "react-router-dom";
 
 function ContactList() {
-    const { contacts = [], loading, fetchContacts, toggleFavourite } =
-        useContactStore();
+    const [query, setQuery] = useState("");
+
+    const {
+        contacts = [],
+        loading,
+        fetchContacts,
+        toggleFavourite,
+        searchContacts,
+    } = useContactStore();
 
     useEffect(() => {
-        fetchContacts();
-        console.log(contacts)
-    }, [fetchContacts]);
+        const timeoutId = setTimeout(() => {
+            if (query.trim()) {
+                searchContacts(query);
+            } else {
+                fetchContacts();
+            }
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [query, searchContacts, fetchContacts]);
 
-
-    if (loading) {
-        return <div className="p-6">loading Contacts</div>;
-    }
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
@@ -28,11 +37,44 @@ function ContactList() {
                 </Link>
             </div>
 
+            {/* Search */}
+            <div className="flex items-center gap-2">
+                <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search contacts..."
+                    className="flex-1 border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+
+                {query && (
+                    <button
+                        onClick={() => setQuery("")}
+                        className="text-sm text-gray-500 hover:underline"
+                    >
+                        Clear
+                    </button>
+                )}
+            </div>
+
+            {loading && (
+                <div className="text-sm text-gray-500">
+                    Searching contacts...
+                </div>
+            )}
 
             {/* Empty state */}
-            {contacts.length === 0 && (
+            {/* No Results (Search) */}
+            {!loading && query.trim() && contacts.length === 0 && (
                 <div className="text-sm text-gray-500">
-                    No contacts found. Create your first contact.
+                    No contacts found for “{query}”.
+                </div>
+            )}
+
+            {/* Empty State (No Contacts Yet) */}
+            {!loading && !query.trim() && contacts.length === 0 && (
+                <div className="text-sm text-gray-500">
+                    No contacts yet. Create your first contact.
                 </div>
             )}
 

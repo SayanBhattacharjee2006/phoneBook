@@ -2,7 +2,7 @@ import { create } from "zustand";
 import {
     createContact as createContactApi,
     getAllContact,
-    searchContacts,
+    searchContacts as searchContactsApi,
     getContactById,
     updateContact as updateContactApi,
     deleteContact as deleteContactApi,
@@ -104,6 +104,20 @@ const useContactStore = create((set) => ({
             throw error;
         }
     },
+
+    searchContacts: async (query) => {
+        try {
+            set({loading:true})
+            const res = await searchContactsApi(query)
+            set({
+                loading:false,
+                contacts: res?.data?.data?.contacts || [],
+            })
+        } catch (error) {
+            set({loading:false})
+            throw error;
+        }
+    }
 }));
 
 export default useContactStore;
