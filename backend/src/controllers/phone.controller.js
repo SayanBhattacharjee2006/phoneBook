@@ -99,6 +99,15 @@ export const createNewPhone = async function (req, res) {
         });
     } catch (error) {
         console.log("Phone creation error:", error.message);
+        // Handle duplicate key (unique index) errors gracefully
+        if (error && error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                error: error.message,
+                message: "Phone number already exists for this contact",
+            });
+        }
+
         return res.status(500).json({
             success: false,
             error: error.message,

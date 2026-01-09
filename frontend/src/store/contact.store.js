@@ -9,6 +9,21 @@ import {
     toggleFavouriteContact,
 } from "../api/contact.api";
 
+import {
+    createPhone,
+    updatePhone as updatePhoneApi,
+} from "../api/phone.api"
+
+import {
+    createEmail,
+    updateEmail as updateEmailApi,
+} from "../api/email.api"
+
+import {
+    createAddress,
+    updateAddress as updateAddressApi
+} from "../api/address.api"
+
 const useContactStore = create((set) => ({
     contacts: [],
     selectedContact: null,
@@ -117,7 +132,79 @@ const useContactStore = create((set) => ({
             set({loading:false})
             throw error;
         }
-    }
+    },
+
+    addPhone: async (contactId, data) => {
+        const res = await createPhone(contactId,data);
+
+        set((state) => ({
+            selectedContact:{
+                ...state.selectedContact,
+                phones:[
+                    ...(state.selectedContact?.phones || []),
+                    ...(res?.data?.data?.phones || []),
+                ],
+            },
+        }))
+
+    },
+    updatePhone: async (contactId,phoneId,data)=>{
+        const res = await updatePhoneApi(contactId,phoneId,data);
+
+        set((state)=>({
+            selectedContact:{
+                ...state.selectedContact,
+                phones: state.selectedContact.phones.map((phone)=> phone._id === phoneId ? res?.data?.data?.phone : phone)
+            }
+        }))
+    },
+    addEmail: async (contactId, data) => {
+        const res = await createEmail(contactId,data);
+
+        set((state) => ({
+            selectedContact:{
+                ...state.selectedContact,
+                emails:[
+                    ...(state.selectedContact?.emails || []),
+                    ...(res?.data?.data?.emails || []),
+                ],
+            },
+        }))
+
+    },
+    updateEmail: async (contactId,emailId,data)=>{
+        const res = await updateEmailApi(contactId,emailId,data);
+
+        set((state)=>({
+            selectedContact:{
+                ...state.selectedContact,
+                emails: state.selectedContact.emails.map((email)=> email._id === emailId ? res?.data?.data?.email : email)
+            }
+        }))
+    },
+    addAddress: async (contactId, data) => { 
+        const res = await createAddress(contactId,data);
+
+        set((state) => ({
+            selectedContact:{
+                ...state.selectedContact,
+                addresses:[
+                    ...(state.selectedContact?.addresses || []),
+                    ...(res?.data?.data?.addresses || []),
+                ],
+            },
+        }))
+    },
+    updateAddress: async (contactId,addressId,data)=>{
+        const res = await updateAddressApi(contactId,addressId,data);
+
+        set((state)=>({
+            selectedContact:{
+                ...state.selectedContact,
+                addresses: state.selectedContact.addresses.map((address)=> address._id === addressId ? res?.data?.data?.address : address)
+            }
+        }))
+    },
 }));
 
 export default useContactStore;
