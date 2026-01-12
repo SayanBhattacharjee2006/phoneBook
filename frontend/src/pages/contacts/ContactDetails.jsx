@@ -1,6 +1,9 @@
 import useContactStore from "../../store/contact.store";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ConfirmModal from "../../components/confirmModal";
+import toast from "react-hot-toast";
+import Skeleton from "../../components/skeleton";
 
 function ContactDetails() {
     const navigate = useNavigate();
@@ -41,6 +44,11 @@ function ContactDetails() {
     const [editingPhoneId, setEditingPhoneId] = useState(null);
     const [editingEmailId, setEditingEmailId] = useState(null);
     const [editingAddressId, setEditingAddressId] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [phoneError, setPhoneError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [addressError, setAddressError] = useState("");
 
     useEffect(() => {
         if (contactId) {
@@ -74,12 +82,16 @@ function ContactDetails() {
         });
     }, [selectedContact?._id]);
 
-    const handleDelete = async (e) => {
+    const handleConfirmDelete = async (e) => {
         try {
             await deleteContact(selectedContact._id);
+            toast.success("Contact deleted successfully");
             navigate("/contacts");
         } catch (error) {
+            toast.error("Failed to delete contact");
             console.error("Delete Contact failed", error);
+        } finally {
+            setShowDeleteModal(false);
         }
     };
 
@@ -109,7 +121,7 @@ function ContactDetails() {
 
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
-
+        setEmailError("");
         if (!selectedContact?._id) return;
         if (!emailForm.email.trim()) return;
 
@@ -123,20 +135,22 @@ function ContactDetails() {
             } else {
                 await addEmail(selectedContact._id, emailForm);
             }
-
+            toast.success("email saved successfully");
             setEmailForm({
                 email: "",
                 emailType: "personal",
             });
             setEditingEmailId(null);
         } catch (error) {
+            setPhoneError("Failed to save email");
+            toast.error("Failed to save email");
             console.error("Email save failed", error);
         }
     };
 
     const handlePhoneSubmit = async (e) => {
         e.preventDefault();
-
+        setPhoneError("");
         if (!phoneForm.phoneNumber.trim()) return;
 
         try {
@@ -150,18 +164,22 @@ function ContactDetails() {
             } else {
                 await addPhone(selectedContact._id, phoneForm);
             }
+            toast.success("phone saved successfully")
             setPhoneForm({
                 phoneNumber: "",
                 phoneType: "personal",
                 isPrimary: false,
             });
         } catch (error) {
+            setPhoneError("Failed to save phone number")
+            toast.error("Failed to save phone number")
             console.error("Phone operation failed", error);
         }
     };
 
     const handleAddressSubmit = async (e) => {
         e.preventDefault();
+        setAddressError("");
 
         if (!selectedContact?._id) return;
         if (!addressForm.street.trim()) return;
@@ -185,14 +203,16 @@ function ContactDetails() {
                 postalCode: "",
                 landmark: "",
             });
+            toast.success("Address saved successfully")
             setEditingAddressId(null);
         } catch (error) {
+            setAddressError("failed to save address")
+            toast.error("failed to save address")
             console.error("Address save failed", error);
         }
     };
 
-    if (loading || !selectedContact)
-        return <div className="p-6">Loading Contact...</div>;
+    if (loading || !selectedContact) return <ContactDetailsSkeleton />;
 
     return (
         // <div className="p-6 space-y-6">
@@ -292,7 +312,7 @@ function ContactDetails() {
                     </Link>
 
                     <button
-                        onClick={handleDelete}
+                        onClick={() => setShowDeleteModal(true)}
                         className="text-sm text-red-600 hover:underline"
                     >
                         Delete
@@ -432,6 +452,7 @@ function ContactDetails() {
                     </button>
                 </form>
             </div>
+            {phoneError && <p className="text-xs text-red-600">{phoneError}</p>}
 
             {/* Emails */}
             <div className="border rounded-lg p-4 space-y-4">
@@ -503,7 +524,7 @@ function ContactDetails() {
                     </button>
                 </form>
             </div>
-
+            {emailError && <p className="text-xs text-red-600">{emailError}</p>}
             {/* Addresses */}
             <div className="border rounded-lg p-4 space-y-4">
                 <h3 className="text-sm font-medium">Addresses</h3>
@@ -626,6 +647,32 @@ function ContactDetails() {
                     </button>
                 </form>
             </div>
+            {addressError && (
+                <p className="text-xs text-red-600">{addressError}</p>
+            )}
+            <ConfirmModal
+                open={showDeleteModal}
+                title="Delete Contact"
+                message="Are you sure you want to delete this contact? This action cannot be undone."
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setShowDeleteModal(false)}
+            />
+        </div>
+    );
+}
+
+function ContactDetailsSkeleton() {
+    return (
+        <div className="p-6 space-y-6">
+            <Skeleton height={2} width="50%" />
+            <Skeleton height={1.5} width="30%" />
+
+            <div className="grid grid-cols-2 gap-4">
+                <Skeleton height={4} />
+                <Skeleton height={4} />
+            </div>
+
+            <Skeleton height={6} />
         </div>
     );
 }

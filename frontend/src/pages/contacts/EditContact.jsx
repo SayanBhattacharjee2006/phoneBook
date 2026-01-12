@@ -4,19 +4,14 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import useContactStore from "../../store/contact.store";
+import toast from "react-hot-toast";
 
 function EditContact() {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    // const selectedContact = useContactStore((state) => state.selectedContact);
-    // const getContact = useContactStore((state) => state.getContact);
-    // const updateContact = useContactStore((state) => state.updateContact);
-    // const loading = useContactStore((state) => state.loading);
-
     const { selectedContact, getContact, updateContact, loading } =
         useContactStore();
-
+    const [error, setError] = useState();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -55,8 +50,9 @@ function EditContact() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setError("");
         if (!formData.firstName.trim()) {
+            setError("first name is required");
             return;
         }
 
@@ -75,9 +71,11 @@ function EditContact() {
             await updateContact(id, {
                 contact: contactPayload,
             });
-
+            toast.success("contact updated successfully");
             navigate(`/contacts/${id}`);
         } catch (error) {
+            setError("Failed to update contactt.try again");
+            toast.error("failed to update contact");
             console.error("Update contact failed", error);
         }
     };
@@ -137,7 +135,7 @@ function EditContact() {
                                 className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                             />
                         </div>
-                        
+
                         <div className="space-y-1">
                             <label className="text-sm text-gray-600">
                                 Notes
@@ -151,8 +149,9 @@ function EditContact() {
                                 placeholder="Additional notes about this contact"
                             />
                         </div>
-                        
                     </div>
+
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
                     {/* Actions */}
                     <Button type="submit" disabled={loading}>

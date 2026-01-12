@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import useAuthStore from "./store/auth.store";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 
 //Auth pages
 import Login from "./pages/auth/Login";
@@ -32,34 +33,48 @@ function App() {
         checkAuth();
     }, [checkAuth]);
     return (
-        <BrowserRouter>
-            <Routes>
-                {/* Auth Routes */}
-                <Route element={<AuthLayout />}>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/welcome" element={<Welcome />} />
-                </Route>
-
-                {/* App Routes */}
-                <Route element={<ProtectedRoute />}>
-                    <Route element={<AppLayout />}>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/contacts" element={<ContactList />} />
-                        <Route path="/contacts/new" element={<AddContact />} />
-                        <Route
-                            path="/contacts/:id"
-                            element={<ContactDetails />}
-                        />
-                        <Route
-                            path="/contacts/:id/edit"
-                            element={<EditContact />}
-                        />
-                        <Route path="/profile" element={<Profile />} />
+        <>
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 3000,
+                    style: {
+                        fontSize: "14px",
+                    },
+                }}
+            />
+            <BrowserRouter>
+                <Routes>
+                    {/* Auth Routes */}
+                    <Route element={<AuthLayout />}>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/welcome" element={<Welcome />} />
                     </Route>
-                </Route>
-            </Routes>
-        </BrowserRouter>
+
+                    {/* App Routes */}
+                    <Route element={<ProtectedRoute />}>
+                        <Route element={<AppLayout />}>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/contacts" element={<ContactList />} />
+                            <Route
+                                path="/contacts/new"
+                                element={<AddContact />}
+                            />
+                            <Route
+                                path="/contacts/:id"
+                                element={<ContactDetails />}
+                            />
+                            <Route
+                                path="/contacts/:id/edit"
+                                element={<EditContact />}
+                            />
+                            <Route path="/profile" element={<Profile />} />
+                        </Route>
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </>
     );
 }
 

@@ -4,11 +4,11 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Card from "../../components/Card";
 import useContactStore from "../../store/contact.store";
-
+import toast from "react-hot-toast";
 function AddContact() {
     const navigate = useNavigate();
     const { loading, createContact } = useContactStore();
-
+    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -27,7 +27,11 @@ function AddContact() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.firstName.trim()) return;
+        setError("");
+        if (!formData.firstName.trim()) {
+            setError("First name is required");
+            return;
+        }
         try {
             const contactPayload = {
                 firstName: formData.firstName,
@@ -36,14 +40,16 @@ function AddContact() {
                 notes: formData.notes,
             };
 
-            if(formData.birthday){
-              contactPayload.birthday = formData.birthday;
+            if (formData.birthday) {
+                contactPayload.birthday = formData.birthday;
             }
 
-            await createContact({ contact: contactPayload});
-
+            await createContact({ contact: contactPayload });
+            toast.success("contact created successfully");
             navigate("/contacts");
         } catch (error) {
+            setError("Failed to create contact. please try again");
+            toast.error("Failed to create contact");
             console.error("Create contact failed", error);
         }
     };
@@ -114,6 +120,8 @@ function AddContact() {
                             />
                         </div>
                     </div>
+
+                    {error && <p className="text-sm text-red-600">{error}</p>}
 
                     {/* Actions */}
                     <Button type="submit" disabled={loading}>

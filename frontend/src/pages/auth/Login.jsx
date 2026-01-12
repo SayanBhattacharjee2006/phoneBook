@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/auth.store";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 function Login() {
     const navigate = useNavigate();

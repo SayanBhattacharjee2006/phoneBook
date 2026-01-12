@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useContactStore from "../../store/contact.store";
 import { Link } from "react-router-dom";
+import Skeleton from "../../components/skeleton";
 
 function ContactList() {
     const [query, setQuery] = useState("");
@@ -57,11 +58,7 @@ function ContactList() {
                 )}
             </div>
 
-            {loading && (
-                <div className="text-sm text-gray-500">
-                    Searching contacts...
-                </div>
-            )}
+            {loading && <ContactListSkeleton/>}
 
             {/* Empty state */}
             {/* No Results (Search) */}
@@ -113,6 +110,23 @@ function ContactList() {
             </ul>
         </div>
     );
+}
+
+
+function ContactListSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[...Array(5)].map((_, i) => (
+        <div
+          key={i}
+          className="border rounded-lg p-4 space-y-2"
+        >
+          <Skeleton height={1.2} width="60%" />
+          <Skeleton height={1} width="40%" />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default ContactList;
